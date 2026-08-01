@@ -1,0 +1,6 @@
+{
+  "name": "Versuni Home AI",
+  "description": "Mobile web application prototype for Versuni Home AI featuring smart appliance coordination, pantry scan, appliance-tuned recipes, and care routines using Gemini API.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
