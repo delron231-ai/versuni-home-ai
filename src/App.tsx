@@ -7,6 +7,7 @@ import { HomeTab } from "./components/tabs/HomeTab";
 import { CookTab } from "./components/tabs/CookTab";
 import { CareTab } from "./components/tabs/CareTab";
 import { AppliancesTab } from "./components/tabs/AppliancesTab";
+import { OnboardingScreen } from "./components/OnboardingScreen";
 
 import {
   Appliance,
@@ -17,6 +18,7 @@ import {
   CoordinationCard,
   ChatMessage,
 } from "./types";
+import { INITIAL_APPLIANCES, INITIAL_HOUSEHOLD } from "./data/seedData";
 import {
   getStoredAppliances,
   setStoredAppliances,
@@ -36,6 +38,7 @@ import {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("home");
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
 
   // Persistent States
   const [appliances, setAppliancesState] = useState<Appliance[]>(getStoredAppliances);
@@ -197,12 +200,36 @@ export default function App() {
     showToast("Chat history cleared", "info");
   };
 
+  // Onboarding Handlers
+  const handleCompleteDemoLogin = () => {
+    updateHousehold(INITIAL_HOUSEHOLD);
+    updateAppliances(INITIAL_APPLIANCES);
+    setShowOnboarding(false);
+    showToast("Logged in with saved credentials (alex.versuni@home.io)! Loaded 4 connected devices.", "success");
+  };
+
+  const handleCompleteCustomOnboarding = (newHh: Household, newApps: Appliance[]) => {
+    updateHousehold(newHh);
+    updateAppliances(newApps);
+    setShowOnboarding(false);
+    showToast(`Onboarding complete! Linked ${newApps.length} appliances for ${newHh.members} household member(s).`, "success");
+  };
+
   const pendingCardsCount = cards.filter((c) => c.status === "pending").length;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
       {/* Toast Overlay */}
       <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
+
+      {/* Onboarding Screen Modal */}
+      {showOnboarding && (
+        <OnboardingScreen
+          onCompleteDemoLogin={handleCompleteDemoLogin}
+          onCompleteCustomOnboarding={handleCompleteCustomOnboarding}
+          onClose={() => setShowOnboarding(false)}
+        />
+      )}
 
       {/* Mobile Shell Frame */}
       <div className="min-h-screen max-w-md mx-auto relative flex flex-col shadow-xl border-x border-slate-200 bg-slate-50">
@@ -212,6 +239,7 @@ export default function App() {
           appliances={appliances}
           onUpdateHousehold={updateHousehold}
           hasApiKey={hasApiKey}
+          onOpenOnboarding={() => setShowOnboarding(true)}
         />
 
         {/* Tab Views */}

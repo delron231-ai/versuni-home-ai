@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Cpu, Wifi, AlertCircle, Settings, X, Save, Users, Clock, ShieldAlert } from "lucide-react";
+import { Cpu, Wifi, AlertCircle, Settings, X, Save, Users, Clock, ShieldAlert, RotateCcw, UserCheck } from "lucide-react";
 import { Household, Appliance } from "../types";
 import { AIChip } from "./AIChip";
 
@@ -8,6 +8,7 @@ interface HeaderProps {
   appliances: Appliance[];
   onUpdateHousehold: (hh: Household) => void;
   hasApiKey: boolean;
+  onOpenOnboarding?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   appliances,
   onUpdateHousehold,
   hasApiKey,
+  onOpenOnboarding,
 }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [members, setMembers] = useState(household.members);
@@ -68,7 +70,18 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {onOpenOnboarding && (
+            <button
+              onClick={onOpenOnboarding}
+              className="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs"
+              title="Open Onboarding & Ecosystem AI Showcase"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
+              <span>Onboarding</span>
+            </button>
+          )}
+
           {lowConsumables.length > 0 && (
             <span className="flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
               <ShieldAlert className="w-3 h-3 text-amber-600" />
@@ -144,6 +157,25 @@ export const Header: React.FC<HeaderProps> = ({
                   onChange={(e) => setOffPeak(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-blue-600"
                 />
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 space-y-2">
+                <span className="block text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                  Ecosystem Onboarding & Account
+                </span>
+                {onOpenOnboarding && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSettings(false);
+                      onOpenOnboarding();
+                    }}
+                    className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold flex items-center justify-center gap-2 shadow-xs"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Open Onboarding / Switch Account</span>
+                  </button>
+                )}
               </div>
 
               <div className="pt-2 flex gap-2">
